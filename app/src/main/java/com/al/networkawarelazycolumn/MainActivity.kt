@@ -16,10 +16,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.al.networkawarelazycolumn.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.Dispatchers
@@ -49,35 +51,13 @@ class MainActivity : ComponentActivity() {
                         networkMonitor = networkMonitor,
                         modifier = Modifier.padding(innerPadding),
                         itemContent = { item, isClickable, paddingModifier ->
-                            Card(
-                                modifier = paddingModifier
-                                    .fillMaxWidth()
-                                    .clickable(enabled = isClickable) {
-                                        Toast.makeText(this@MainActivity, "Clicked: $item", Toast.LENGTH_SHORT).show()
-                                    },
-                                shape = RoundedCornerShape(8.dp), // Rounded corners for card
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 2.dp
-                                ),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color.White
-                                )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(16.dp)
-                                ) {
-                                    Text(
-                                        text = "Title: $item",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = Color.Black
-                                    )
-                                    Text(
-                                        text = "This is a subtitle for $item.",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color.Gray
-                                    )
+                            ItemCard(
+                                item = item,
+                                isClickable = isClickable,
+                                onClick = {
+                                    Toast.makeText(this@MainActivity, "Clicked: $item", Toast.LENGTH_SHORT).show()
                                 }
-                            }
+                            )
                         }
                     )
                 }
@@ -85,6 +65,33 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Composable
+fun ItemCard(item: String, isClickable: Boolean, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.semantics(mergeDescendants = true) {}
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable(enabled = isClickable, onClick = onClick),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Title: $item",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Black
+            )
+            Text(
+                text = "This is a subtitle for $item.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
 
 private suspend fun fetchDataInBackground() {
     withContext(Dispatchers.IO) {
