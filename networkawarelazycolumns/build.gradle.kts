@@ -55,7 +55,7 @@ publishing {
             afterEvaluate {
                 from(components["release"])
             }
-            groupId = "com.al.networkawarelazycolumn"
+            groupId = "com.github.dontkeep"
             artifactId = "network-aware-lazycolumn"
             version = "1.0.0"
 
